@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "*.embeddedhtml": "html",
+        "queue": "cpp",
+        "set": "cpp",
+        "string": "cpp",
+        "memory": "cpp",
+        "utility": "cpp",
+        "iostream": "cpp"
+    }
+}

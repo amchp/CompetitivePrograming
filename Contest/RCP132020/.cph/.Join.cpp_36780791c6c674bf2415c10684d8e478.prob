@@ -1,0 +1,1 @@
+{"name":"Local: Join","url":"/Users/alejandromcewen/Documents/Estudios/ProgramaciónCompetitiva/RCP132020/Join.cpp","tests":[{"id":1639261636714,"input":"4 10\n9 11\n5 6\n5 6\n1 2","output":"13"}],"interactive":false,"memoryLimit":1024,"timeLimit":3000,"srcPath":"/Users/alejandromcewen/Documents/Estudios/ProgramaciónCompetitiva/RCP132020/Join.cpp","group":"local","local":true}

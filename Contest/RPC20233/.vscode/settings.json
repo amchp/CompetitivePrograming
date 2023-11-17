@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "*.embeddedhtml": "html",
+        "vector": "cpp",
+        "map": "cpp",
+        "queue": "cpp",
+        "ios": "cpp",
+        "memory": "cpp",
+        "utility": "cpp"
+    }
+}

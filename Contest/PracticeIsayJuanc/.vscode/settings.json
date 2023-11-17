@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "utility": "cpp",
+        "iostream": "cpp",
+        "__bit_reference": "cpp",
+        "algorithm": "cpp"
+    }
+}

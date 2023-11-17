@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "cassert": "cpp",
+        "set": "cpp",
+        "ios": "cpp",
+        "iostream": "cpp",
+        "vector": "cpp",
+        "queue": "cpp"
+    }
+}
