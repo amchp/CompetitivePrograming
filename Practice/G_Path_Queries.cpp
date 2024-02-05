@@ -25,7 +25,7 @@ typedef pair<ll, ll> pll;
 typedef vector<int> vi;
 typedef vector<ll> vl;
 
-const ll inf = 1e18;
+const int inf = 1e9;
 const int nax = 2e5 + 200;
 const ld pi = acos(-1);
 const ld eps = 1e-9;
@@ -33,36 +33,33 @@ const ld eps = 1e-9;
 int dr[] = {1, -1, 0, 0, 1, -1, -1, 1};
 int dc[] = {0, 0, 1, -1, 1, 1, -1, -1};
 
-map<int, vector<ii>> edges;
-int n;
 int p[nax];
 int szs[nax];
-ll ans;
+ll gans = 0;
 
-ll calc(ll a, ll b){
-    return a*b;
+ll range_sum(int x){
+    return 1LL*(x - 1)*(x) / 2;
 }
 
-void init(){
-    ans = 0;
-    forn(i, n){
-        p[i] = i;
-        szs[i] = 1;
-    }
+int find(int x){
+    if(p[x] == x)return x;
+    return p[x] = find(p[x]);
 }
 
-int find(int u){
-    return u == p[u] ? u : p[u] = find(p[u]);
-}
-
-void merge(int a, int b){
-    int pA = find(a);
-    int pB = find(b);
-    if(pA == pB)return;
-    if(szs[pA] < szs[pB])swap(pA, pB);
-    ans += calc(szs[pA], szs[pB]);
-    p[pB] = pA;
-    szs[pA] += szs[pB];
+void combine(int u, int v){
+    int pu = find(u);
+    int pv = find(v);
+    // cout << pu << ' ' << pv << el;
+    if(pu == pv)return;
+    if(szs[pu] < szs[pv])swap(pu, pv);
+    p[pv] = pu;
+    gans -= range_sum(szs[pu]);
+    // d(gans);
+    gans -= range_sum(szs[pv]);
+    // d(gans);
+    szs[pu] += szs[pv];
+    gans += range_sum(szs[pu]);
+    // d(gans);
 }
 
 int main() {
@@ -70,33 +67,40 @@ int main() {
     cin.tie(0);
     cout.tie(0);
     cout << setprecision(20);
-    int m;
-    cin >> n >> m;
+    int n, q;
+    cin >> n >> q;
+    vector<vi> ord(n - 1);
     forn(i, n - 1){
         int u, v, w;
         cin >> u >> v >> w;
-        u--;
-        v--;
-        edges[w].pb({u, v});
+        --u, --v;
+        ord[i] = {w, u, v};
+        p[i] = i;
+        szs[i] = 1;
     }
-    vector<pll> lAns;
-    lAns.pb({-1LL, 0LL});
-    init();
-    for(auto &[a, b] : edges){
-        for(auto &[u, v] : b){
-            merge(u, v);
+    p[n - 1] = n - 1;
+    szs[n - 1] = 1;
+    sort(all(ord));
+    vector<ii> queries(q);
+    forn(i, q){
+        cin >> queries[i].fi;
+        queries[i].se = i;
+    }
+    sort(all(queries));
+    vl ans(q);
+    int oi = 0;
+    int cw = 0;
+    for(auto& [qi, ind] : queries){
+        while(oi < n - 1){
+            cw = ord[oi][0];
+            if(cw > qi)break;
+            // d(oi);
+            // cout << ord[oi][1] << ' ' << ord[oi][2] << el;
+            combine(ord[oi][1], ord[oi][2]);
+            ++oi;
         }
-        lAns.pb({(int)a, ans});
+        ans[ind] = gans;
     }
-    // for(auto &[a, b]: lAns){
-    //     cout << a << ' ' << b << el;
-    // }
-    forn(i, m){
-        ll q;
-        cin >> q;
-        pll val = {q, inf};
-        int ind = upper_bound(lAns.begin(), lAns.end(), val) - lAns.begin();
-        ind--;
-        cout << lAns[ind].second << ' ';
-    }
+    forn(i, q)cout << ans[i] << ' ';
+    cout << el;
 }

@@ -33,16 +33,27 @@ const ld eps = 1e-9;
 int dr[] = {1, -1, 0, 0, 1, -1, -1, 1};
 int dc[] = {0, 0, 1, -1, 1, 1, -1, -1};
 
-ii t[nax];
-vi lazyu[nax];
-vi lazyd[nax];
+struct node{
+  int time, x, change;
+  node(): time(0), x(0), change(0){}
+  node(int t, int xi, int c): time(t), x(xi), change(c){}
+  bool operator<(node other){
+    return time < other.time;
+  }
+  bool operator==(node other){
+    return time == other.time;
+  }
+};
 
+ii t[nax];
+node lazyu[nax];
+node lazyd[nax];
 
 struct stree{
   int n, l, r, val, opr, idx, pos;
   ii neutro = {0, 0};
-  vi neutrou = {-1, 0, 1};
-  vi neutrod = {-1, inf, -1};
+  node neutrou = node(-1, 0, 1);
+  node neutrod = node(-1, inf, -1);
   stree(int n): n(n){
     forn(i, n << 2){
       t[i] = neutro;
@@ -56,22 +67,22 @@ struct stree{
     ans.se = max(a.se, b.se);
     return ans;
   }
-  inline void updNode(int v, vi& op, vi& op2){
+  inline void updNode(int v, node& op, node& op2){
     int& mn = t[v].fi;
     int& mx = t[v].se;
-    vector<vi> vec = {lazyu[v], lazyd[v], op, op2};
+    vector<node> vec = {lazyu[v], lazyd[v], op, op2};
     sort(all(vec));
     forn(i, sz(vec)){
-      if(vec[i][2] == 1){
-        if(mn < vec[i][1]){
-          mn = vec[i][1];
+      if(vec[i].change == 1){
+        if(mn < vec[i].x){
+          mn = vec[i].x;
           mx = max(mx, mn);
           lazyu[v] = vec[i]; 
         }
       }
       else{
-        if(mx > vec[i][1]){
-          mx = vec[i][1];
+        if(mx > vec[i].x){
+          mx = vec[i].x;
           mn = min(mn, mx);
           lazyd[v] = vec[i];
         }
@@ -88,7 +99,7 @@ struct stree{
   void upd(int v, int tl, int tr){
     if(tl > r || tr < l) return;
     if(l <= tl && tr <= r){
-      vi vec = {idx, val, opr};
+      node vec = node(idx, val, opr);
       if(opr == 1)updNode(v, vec, neutrod);
       else updNode(v, neutrou, vec);
       return ;
@@ -99,8 +110,7 @@ struct stree{
   }
   int query(int v, int tl, int tr){
     if(tl == tr){
-      if(lazyu[v][0] > lazyd[v][0])return t[v].fi;
-      else return t[v].fi;
+      return t[v].fi;
     }
     push(v);  int tm = (tl + tr) >> 1;
     if(pos <= tm)return query(v << 1, tl, tm);
