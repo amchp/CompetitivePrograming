@@ -1,0 +1,79 @@
+#include <bits/stdc++.h>
+
+#define fi first
+#define se second
+#define forn(i,n) for(int i=0; i< (int)n; ++i)
+#define for1(i,n) for(int i=1; i<= (int)n; ++i)
+#define fore(i,l,r) for(int i=(int)l; i<= (int)r; ++i)
+#define ford(i,n) for(int i=(int)(n) - 1; i>= 0; --i)
+#define fored(i,l,r) for(int i=(int)r; i>= (int)l; --i)
+#define pb push_back
+#define el '\n'
+#define db(x) cout<< #x<< " " << x<<el
+#define ri(n) scanf("%d",&n)
+#define sz(v) int(v.size())
+#define all(v) v.begin(),v.end()
+
+using namespace std;
+
+typedef long long ll;
+typedef double ld;
+typedef pair<int,int> ii;
+typedef pair<ll,ll> pll;
+typedef tuple<int, int, int> iii;
+typedef vector<int> vi;
+typedef vector<ii> vii;
+typedef vector<ll> vll;
+typedef vector<ld> vd;
+
+
+const int inf = 1e9;
+const int nax = 1e5+200;
+const ld pi = acos(-1);
+const ld eps= 1e-9;
+const int mod = 998244353;
+
+int dr[] = {1,-1,0, 0,1,-1,-1, 1};
+int dc[] = {0, 0,1,-1,1, 1,-1,-1};
+
+struct mint{
+    int x;
+    mint(ll x): x(x % mod){}
+    mint operator+(mint b){
+        int ans = x + b.x;
+        if(ans >= mod)ans -= mod;
+        return ans;
+    }
+    mint operator*(mint b){
+        return 1LL*x*b.x%mod;
+    }
+};
+
+int main(){
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL); cout.tie(NULL);
+    cout << setprecision(20)<< fixed;
+    int n;
+    cin >> n;
+    vll a(n);
+    forn(i, n)cin >> a[i];
+    mint ans = 0;
+    vector<vi> szs(n, vi(11, 0));
+    ford(i, n - 1){
+        ll& v = a[i + 1];
+        for1(j, 10)szs[i][j] = szs[i + 1][j];
+        // db(floor(log10(v)) + 1);
+        ++szs[i][floor(log10(v)) + 1];
+    }
+    forn(i, n){
+        ans = ans + mint(a[i])*i;
+        ll pw = 10;
+        for1(j, 10){
+            // cout << szs[i][j] << ' ';
+            ans = ans + mint(a[i])*mint(pw)*szs[i][j];
+            pw *= 10;
+        }
+        // cout << el;
+    }
+    cout << ans.x << el;
+}

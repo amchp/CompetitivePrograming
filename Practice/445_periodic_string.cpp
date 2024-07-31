@@ -33,44 +33,24 @@ const ld eps = 1e-9;
 int dr[] = {1, -1, 0, 0, 1, -1, -1, 1};
 int dc[] = {0, 0, 1, -1, 1, 1, -1, -1};
 
-// O(|s|)
-vi z_function(string &s){
-    int n = s.size();
-    vi z(n);
-    int x = 0, y = 0;
-    for (int i = 1; i < n; ++i)
-    {
-        z[i] = max(0, min(z[i - x], y - i + 1));
-        while (i + z[i] < n && s[z[i]] == s[i + z[i]])
-            x = i, y = i + z[i], z[i]++;
-    }
-    return z;
+vi get_phi(string &s) { // O(|s|)
+  int j = 0, n = sz(s); vi pi(n);
+  for1(i,n-1){
+    while (j > 0 && s[i] != s[j]) j = pi[j-1];
+    j += (s[i] == s[j]);
+    pi[i] = j;
+  }
+  return pi;
 }
 
-int sol(){
+void sol(){
     string s;
     cin >> s;
-    vi z = z_function(s);
-    z.pb(0);
+    vi phi = get_phi(s);
     int n = sz(s);
-    assert(n != 0);
-    vi factors;
-    for(int i = 1; i*i <= n; ++i){
-        if(n % i == 0){
-            int j = n / i;
-            factors.pb(i);
-            if(i != j)factors.pb(j);
-        }
-    }
-    sort(all(factors));
-    // for(int& factor: factors)cout << factor << ' ';
-    // cout << el;
-    for(int& factor: factors){
-        if(factor + z[factor] == n){
-            return factor;
-        }
-    }
-    return n;
+    int k = n - phi[n - 1];
+    if(n % k == 0)cout << k << el;
+    else cout << n << el;
 }
 
 int main()
@@ -83,7 +63,7 @@ int main()
     cin >> t;
     string s;
     while(t--){
-        cout << sol() << el;
+        sol();
         if(t)cout << el;
     }
     // cout << el;

@@ -34,16 +34,19 @@ int dr[] = {1, -1, 0, 0, 1, -1, -1, 1};
 int dc[] = {0, 0, 1, -1, 1, 1, -1, -1};
 
 string s;
-int n, ini, jmp;
-int visited[nax];
 
-bool dfs(int ind){
-    if(s[ind] == 'P')return false;
-    if(visited[ind])return ind == ini;
-    visited[ind] = true;
-    bool ans = dfs((ind + jmp) % n);
-    visited[ind] = false;
-    return ans;
+bool check(int st, int jmp){
+    for(int i = st; i < sz(s); i += jmp){
+        if(s[i] == 'P')return false;
+    }
+    return true;
+}
+
+bool sol(int f){
+    forn(i, f){
+        if(check(i, f))return true;
+    }
+    return false;
 }
 
 int main() {
@@ -52,67 +55,28 @@ int main() {
     cout.tie(0);
     cout << setprecision(20);
     cin >> s;
-    n = sz(s);
-    bool all = true;
-    forn(i, n){
-        all &= s[i] == 'R';
-    }
-    if(all){
-        cout << n - 1 << el;
-        return 0;
-    }
-    vector<bool> crv = vector<bool>(nax, true);
-    vi primes;
-    for(int i = 2; i < n; ++i){
-        if(crv[i] == false)continue;
-        primes.pb(i);
-        for(int j = i + i; j < n; j += i){
-            crv[j] = false;
+    int n = sz(s);
+    vi factors;
+    for(int i = 1; i*i <= n; ++i){
+        if(n % i == 0){
+            factors.pb(i);
+            int j = n / i;
+            if(i != j)factors.pb(j);
         }
     }
-    // for(int p : primes)cout << p << ' ';
-    // cout << el;
-    vi dprimes;
-    int tN = n;
-    for(int p : primes){
-        while(tN % p == 0){
-            tN = tN / p;
-            dprimes.pb(p);
-        }
+    sort(all(factors));
+
+    vi bkt(sz(factors));
+    for1(i, n - 1){
+        int ind = lower_bound(all(factors), __gcd(n, i)) - factors.begin();
+        ++bkt[ind];
     }
-    vector<bool> wP(sz(dprimes));
-    vi wPr;
-    forn(i, n){
-        if(s[i] == 'P');
-        forn(j, sz(dprimes)){
-            if(wP[j])continue;
-            jmp = dprimes[j];
-            ini = i;
-            wP[j] = dfs(i);
-            if(wP[j])wPr.pb(dprimes[j]);
-        }
-    }
-    // for(int p : wPr){
-    //     cout << p << ' ';
-    // }
-    // cout << el;
     int ans = 0;
-    for(int i = 1; i < 1<<(sz(wPr)); ++i){
-        int cnt = 0;
-        int total = 1;
-        forn(j, sz(wPr)){
-            if(i & (1 << j)){
-                total = lcm(total, wPr[j]);
-                cnt++;
-            }
-        }
-        // cout << cnt << ' ' << total << el;
-        if(cnt % 2){
-            ans += (n - 1) / total;
-        }else{
-            ans -= (n - 1) / total;
+    forn(i, sz(factors)){
+        int& f = factors[i];
+        if(sol(f)){
+            ans += bkt[i];
         }
     }
-    // cout << el;
     cout << ans << el;
 }

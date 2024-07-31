@@ -25,8 +25,8 @@ typedef pair<ll, ll> pll;
 typedef vector<int> vi;
 typedef vector<ll> vl;
 
-const int inf = 1e9;
 const int nax = 1e5 + 200;
+const int inf = 1e9;
 const ld pi = acos(-1);
 const ld eps = 1e-9;
 const int mod = 998244353;
@@ -34,73 +34,18 @@ const int mod = 998244353;
 int dr[] = {1, -1, 0, 0, 1, -1, -1, 1};
 int dc[] = {0, 0, 1, -1, 1, 1, -1, -1};
 
+int dp[nax][201][3];
+int pre[201][3];
+
 int add(int a, int b){
     int ans = a + b;
     if(ans >= mod)ans -= mod;
     return ans;
 }
 
-int n;
-int dp[nax][210][4];
-int a[nax];
-
-int sol(int ind, int x, int st){
-    // d(ind);
-    // d(x);
-    // d(st);
-    if(ind == n)return 1;
-    int& ans = dp[ind][x][st];
-    // d(ans);
-    if(ans != -1)return ans;
-    ans = 0;
-    // d(ans);
-    if(ind == n - 1){
-        if(a[ind] != -1){
-            if(st == 2){
-                ans = x == a[ind];
-                return ans;
-            }
-            if(a[ind] <= x)ans = 1;
-            return ans;
-        }
-        if(st == 2){
-            ans = add(ans, sol(ind + 1, x, 1));
-            return ans;
-        }
-        if(x > 1)ans = add(ans, sol(ind, x - 1, 0));
-        ans = add(ans, sol(ind + 1, x, 1));
-        return ans;
-    }
-    if(st == 0){
-        ans = add(ans, sol(ind + 1, x, 1));
-        if(x > 1)ans = add(ans, sol(ind, x - 1, 0));
-    }else if(st == 1){
-        if(a[ind] != -1){
-            if(a[ind] <= x)ans = sol(ind + 1, a[ind], 1);
-            else ans = sol(ind + 1, a[ind], 2);
-            return ans;
-        }
-        if(x < 200)ans = add(ans, sol(ind, x + 1, 3));
-        ans = add(ans, sol(ind + 1, x, 1));
-        if(x > 1)ans = add(ans, sol(ind, x - 1, 0));
-    }else if(st == 2){
-        if(a[ind] != -1){
-            if(a[ind] > x){
-                // d(x);
-                ans = sol(ind + 1,  a[ind], 2);
-            }
-            if(a[ind] == x){
-                // d(x);
-                ans = sol(ind + 1, a[ind], 1);
-            }
-            return ans;
-        }
-        ans = add(ans, sol(ind + 1, x, 1));
-        if(x < 200)ans = add(ans, sol(ind, x + 1, 3));
-    }else if(st == 3){
-        ans = add(ans, sol(ind + 1, x, 2));
-        if(x < 200)ans = add(ans, sol(ind, x + 1, 3));
-    }
+int sbt(int a, int b){
+    int ans = a - b;
+    if(ans < 0)ans += mod;
     return ans;
 }
 
@@ -109,15 +54,49 @@ int main() {
     cin.tie(0);
     cout.tie(0);
     cout << setprecision(20);
+    int n;
     cin >> n;
+    vi a(n);
     forn(i, n)cin >> a[i];
-    if(n == 2){
-        if(a[0] == -1 && a[1] == -1)cout << 200 << el;
-        else if(a[0] == a[1])cout << 1 << el;
-        else cout << 0 << el;
-        return 0;
+    if(a[0] == -1){
+        for1(i, 200){
+            dp[0][i][0] = 1;
+        }
+    }else{
+        dp[0][a[0]][0] = 1;
     }
-    memset(dp, -1, sizeof(dp));
-    int ans = sol(1, max(a[0], 1), 2);
+    
+    for1(ind, n - 1){
+        for1(val, 200){
+            pre[val][0] = add(dp[ind - 1][val][0], pre[val - 1][0]);
+            pre[val][1] = add(dp[ind - 1][val][1], pre[val - 1][1]);
+            pre[val][2] = add(dp[ind - 1][val][2], pre[val - 1][2]);
+        }
+        for1(val, 200){
+            if(a[ind] != -1 && a[ind] != val)continue;
+            dp[ind][val][0] =  add(
+                add(
+                    pre[val - 1][0], 
+                    pre[val - 1][1]
+                ), 
+                pre[val - 1][2]
+            );
+            dp[ind][val][1] = add(
+                add(
+                    sbt(pre[val][0], pre[val - 1][0]),
+                    sbt(pre[val][1], pre[val - 1][1])
+                ),
+                sbt(pre[val][2], pre[val - 1][2])
+            );
+            dp[ind][val][2] = add(
+                sbt(pre[200][2], pre[val][2]),
+                sbt(pre[200][1], pre[val][1])
+            );
+        }
+    }
+    int ans = 0;
+    for1(val, 200){
+        ans = add(ans, add(dp[n - 1][val][1], dp[n - 1][val][2]));
+    }
     cout << ans << el;
 }

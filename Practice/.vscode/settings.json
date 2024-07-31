@@ -55,6 +55,26 @@
         "charconv": "cpp",
         "barrier": "cpp",
         "latch": "cpp",
-        "semaphore": "cpp"
+        "semaphore": "cpp",
+        "__node_handle": "cpp",
+        "__debug": "cpp",
+        "iterator": "cpp",
+        "memory_resource": "cpp",
+        "fstream": "cpp",
+        "sstream": "cpp",
+        "streambuf": "cpp",
+        "typeinfo": "cpp",
+        "generator": "cpp",
+        "text_encoding": "cpp",
+        "__mutex_base": "cpp",
+        "any": "cpp",
+        "future": "cpp",
+        "optional": "cpp",
+        "shared_mutex": "cpp",
+        "thread": "cpp",
+        "expected": "cpp",
+        "spanstream": "cpp",
+        "stop_token": "cpp",
+        "syncstream": "cpp"
     }
 }

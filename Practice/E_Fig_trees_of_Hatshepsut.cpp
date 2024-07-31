@@ -2,125 +2,157 @@
 
 #define fi first
 #define se second
-#define forn(i, n) for (int i = 0; i < (int)n; ++i)
-#define for1(i, n) for (int i = 1; i <= (int)n; ++i)
-#define fore(i, l, r) for (int i = (int)l; i <= (int)r; ++i)
-#define ford(i, n) for (int i = (int)(n)-1; i >= 0; --i)
-#define fored(i, l, r) for (int i = (int)r; i >= (int)l; --i)
+#define forn(i,n) for(ll i=0; i< (ll)n; ++i)
+#define for1(i,n) for(ll i=1; i<= (ll)n; ++i)
+#define fore(i,l,r) for(ll i=(ll)l; i<= (ll)r; ++i)
+#define ford(i,n) for(ll i=(ll)(n) - 1; i>= 0; --i)
+#define fored(i,l,r) for(ll i=(ll)r; i>= (ll)l; --i)
 #define pb push_back
 #define el '\n'
-#define d(x) cout << #x << " " << x << el
-#define ri(n) scanf("%d", &n)
-#define sz(v) ((int)v.size())
-#define all(v) v.begin(), v.end()
-#define allr(v) v.rbegin(), v.rend()
+#define db(x) cout<< #x<< " " << x<<el
+#define ri(n) scanf("%d",&n)
+#define sz(v) ll(v.size())
+#define all(v) v.begin(),v.end()
 
 using namespace std;
 
 typedef long long ll;
 typedef double ld;
-typedef pair<int, int> ii;
-typedef pair<char, int> pci;
-typedef pair<ll, ll> pll;
-typedef vector<int> vi;
-typedef vector<ll> vl;
+typedef pair<ll,ll> ii;
+typedef pair<ll,ll> pll;
+typedef tuple<ll, ll, ll> iii;
+typedef vector<ll> vi;
+typedef vector<ii> vii;
+typedef vector<ll> vll;
+typedef vector<ld> vd;
+typedef array<ll, 20> a20;
 
-const int inf = 1e9;
-const int nax = 1e5 + 200;
+const ll inf = 1e9;
+const ll kax = 1e6+200;
 const ld pi = acos(-1);
-const ld eps = 1e-9;
+const ld eps= 1e-9;
 
-int dr[] = {1, -1, 0, 0, 1, -1, -1, 1};
-int dc[] = {0, 0, 1, -1, 1, 1, -1, -1};
+ll dr[] = {1,-1,0, 0,1,-1,-1, 1};
+ll dc[] = {0, 0,1,-1,1, 1,-1,-1};
 
-#define neutro 0
-struct stree{
-  int n;   vector<int> t, lazy;
-  stree(int m){
-    n = m;    t.resize(n<<2);
-    lazy.resize(n<<2);
+ll phi[kax + 1];
+
+struct node{
+  ll sm = 0;
+  ll szs = 0, x = 0;
+  bool eq = false, lz = false;
+  node(){}
+  node(ll x, bool eq, ll szs): sm(x), x(x), eq(eq), szs(szs){}
+  node(node& a, node& b){
+    sm = a.sm + b.sm;
+    eq = (a.eq && b.eq) && (a.x == b.x);
+    x = eq ? a.x : -1;
+    szs = a.szs + b.szs;
   }
-  stree(vector<int> &a){
-    n = sz(a); t.resize(n<<2);   lazy.resize(n<<2);
-    build(1,0, n-1, a);
+  void lazy(ll val){
+    x = val;
+    sm = 1LL*x*szs;
+    eq = true;
+    lz = true;
   }
-  inline int oper(int a, int b){ return a + b; }
-  void build(int v, int tl, int tr, vector<int> &a){
-    if(tl==tr){
-      t[v]= a[tl]; return ;
-    }
-    int tm = tl + (tr-tl)/ 2;
-    build(v*2, tl, tm, a);
-    build(v*2+1, tm+1, tr, a);
-    t[v] = oper(t[v*2], t[v*2+1]);
+  void lazy1(){
+    assert(eq);
+    lz = true;
+    x = phi[x];
+    sm = 1LL*x*szs;
   }
-  void push(int v) {
-    t[v*2] += lazy[v]; lazy[v*2] += lazy[v];
-    t[v*2+1] += lazy[v]; lazy[v*2+1] += lazy[v];
-    lazy[v] = 0;
-  }
-  void upd(int v, int tl, int tr, int l, int r, int val) {
-    if(tl>r || tr<l) return ;
-    if (l <= tl && tr <= r) {
-      t[v] += val;
-      lazy[v] += val; return ;
-    }
-    push(v);
-    int tm = tl + (tr-tl)/ 2;
-    upd(v*2, tl, tm, l, r, val);
-    upd(v*2+1, tm+1, tr, l, r, val);
-    t[v] = oper(t[v*2], t[v*2+1]);
-  }
-  int query(int v, int tl, int tr, int l, int r) {
-    if(tl>r || tr<l) return neutro;
-    if (l <= tl && tr <= r) return t[v];
-    push(v);
-    int tm = tl + (tr-tl)/ 2;
-    return oper(query(v*2, tl, tm, l, r),
-               query(v*2+1, tm+1, tr, l, r));
-  }
-  void upd(int v, int tl, int tr, int l, int r) {
-    if(tl>r || tr<l) return ;
-    if (l <= tl && tr <= r) {
-      t[v] += val;
-      lazy[v] += val; return ;
-    }
-    push(v);
-    int tm = tl + (tr-tl)/ 2;
-    upd2(v*2, tl, tm, l, r);
-    upd2(v*2+1, tm+1, tr, l, r);
-    t[v] = oper(t[v*2], t[v*2+1]);
-  }
-  void upd(int l, int r, int val){ upd(1,0,n-1,l, r,val); }
-  void upd2(int l, int r){ upd2(1, 0, n-1, l, r); }
-  int query(int l, int r){ return query(1,0,n-1,l,r); }
 };
 
-int main() {
+const ll N = 2e5 + 200;
+node t[N << 2];
+struct stree{
+  ll n, l, r, val, lz;
+  ll neutro = 0;
+  stree(vi& a){
+    n = sz(a);
+    build(1, 0, n-1, a);
+  }
+  inline void push(ll v){
+    if(t[v].lz){
+      t[v << 1].lazy(t[v].x);
+      t[(v << 1) | 1].lazy(t[v].x);
+      t[v].lz = false;
+    }
+  }
+  void build(ll v, ll tl, ll tr, vi& a){
+    if(tl == tr){
+      t[v] = node(a[tl], true, 1);
+      return;
+    }
+    ll tm = (tl + tr) >> 1;
+    build(v << 1, tl, tm, a), build((v << 1) | 1, tm+1, tr, a);
+    t[v] = node(t[v << 1], t[(v << 1) | 1]);
+  }
+  void upd(ll v, ll tl, ll tr){
+    if(tl > r || tr < l) return;
+    if(l <= tl && tr <= r){
+      if(lz == 1 && t[v].eq){
+        t[v].lazy1();
+        return;
+      }if(lz == 2){
+        t[v].lazy(val);
+        return;
+      }
+    }
+    push(v);  ll tm = (tl + tr) >> 1;
+    upd(v << 1, tl, tm);  upd((v << 1) | 1, tm+1, tr);
+    t[v] = node(t[v << 1], t[(v << 1) | 1]);
+  }
+  ll query(ll v, ll tl, ll tr){
+    if(tl > r || tr < l) return neutro;
+    if(l <= tl && tr <= r){
+      return t[v].sm;
+    }
+    push(v);  ll tm = (tl + tr) >> 1;
+    return query(v << 1, tl, tm) + query((v << 1) | 1, tm + 1, tr);
+  }
+  void update(ll ql, ll qr, ll qval, ll qlz){  
+    l = ql, r = qr, val = qval, lz = qlz,  upd(1, 0, n-1);
+  }
+  ll query(ll ql, ll qr){
+    l = ql, r = qr;  return query(1, 0, n-1);
+  }
+};
+
+void phi_1_to_n() {
+  ll n = kax;
+  phi[0] = 0;
+  phi[1] = 1;
+  for (ll i = 2; i <= n; i++)
+    phi[i] = i - 1;
+  for (ll i = 2; i <= n; i++)
+    for (ll j = 2 * i; j <= n; j += i)
+      phi[j] -= phi[i];
+}
+
+int main(){
     ios_base::sync_with_stdio(false);
-    cin.tie(0);
-    cout.tie(0);
-    cout << setprecision(20);
-    int n, q;
+    cin.tie(NULL); cout.tie(NULL);
+    cout << setprecision(20)<< fixed;
+    phi_1_to_n();
+    // Input
+    ll n, q;
     cin >> n >> q;
     vi a(n);
     forn(i, n)cin >> a[i];
     stree st(a);
-    while(q--){
-        int op;
-        cin >> op;
-        if(op == 1){
-            int l, r;
-            cin >> l >> r;
-            st.upd2(l, r);
-        }else if(op == 2){
-            int l, r; x;
-            cin >> l >> r >> x;
-            st.upd(l, r, x);
-        }else if(op == 3){
-            int l, r;
-            cin >> l >> r;
-            st.query(l, r);
-        }
+    forn(_, q){
+      ll type, l, r;
+      cin >> type >> l >> r;
+      --l, --r;
+      if(type == 1){
+        st.update(l, r, 0, 1);
+      }else if(type == 2){
+        ll x;
+        cin >> x;
+        st.update(l, r, x, 2);
+      }else if(type == 3){
+        cout << st.query(l, r) << el;
+      }
     }
 }

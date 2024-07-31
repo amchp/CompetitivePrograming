@@ -1,6 +1,5 @@
-count= 0
-s = []
-for a in range(1, int(4e4)):
-    if str(a) == str(a)[::-1]:
-        s.append(a)
-print(len(s))
+count = 0
+
+for i in range(1, int(1e5) + 1):
+    count += (int(1e5) + i - 1) // i
+print(count)
