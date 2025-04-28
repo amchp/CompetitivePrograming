@@ -1,64 +1,108 @@
-#include <vector>
-#include <map>
-#include <cstdlib>
-#include <fstream>
-#include <iomanip>   
-#include <iostream>  
-#include <sstream>  // istringstream buffer(myString);
-#include <stack>
-#include <algorithm>
-#include <cstring>
-#include <cassert>
-#include <math.h>
-#include <unordered_map>
-#include <queue>
-#include <array>
+#include <bits/stdc++.h>
 
-// Useful constants 
-#define INF                         (int)2e9 
-#define EPS                         1e-9
-
+#define fi first
+#define se second
+#define forn(i,n) for(int i=0; i< (int)n; ++i)
+#define for1(i,n) for(int i=1; i<= (int)n; ++i)
+#define fore(i,l,r) for(int i=(int)l; i<= (int)r; ++i)
+#define ford(i,n) for(int i=(int)(n) - 1; i>= 0; --i)
+#define fored(i,l,r) for(int i=(int)r; i>= (int)l; --i)
+#define pb push_back
 #define el '\n'
-
-#define MAXN                         (int)2e5
-#define MAXA                         (int)1e9
+#define db(x) cout<< #x<< " " << x<<el
+#define ri(n) scanf("%d",&n)
+#define sz(v) int(v.size())
+#define all(v) v.begin(),v.end()
 
 using namespace std;
 
-int n, m;
+typedef long long ll;
+typedef double ld;
+typedef pair<int,int> ii;
+typedef pair<ll,ll> pll;
+typedef tuple<int, int, int> iii;
+typedef vector<int> vi;
+typedef vector<ii> vii;
+typedef vector<ll> vll;
+typedef vector<ld> vd;
 
-int A[MAXN], B[MAXN];
 
-map< int, map<int, int> > dp;
+const int inf = 1e9;
+const int nax = 1e5+200;
+const ld pi = acos(-1);
+const ld eps= 1e-9;
 
-int minimum(int i, int a, int b){
-    int e = dp[i][a];
-    if(i == n){
-        if(a < 1){
-            dp[i][a] = b;
-            return b;
-        }else return INF;
+int dr[] = {1,-1,0, 0,1,-1,-1, 1};
+int dc[] = {0, 0,1,-1,1, 1,-1,-1};
+
+void sol(){
+    ll n, m;
+    cin >> n >> m;
+    vector<ii> vec(n);
+    forn(i, n)cin >> vec[i].fi;
+    forn(i, n)cin >> vec[i].se;
+    vi a, b;
+    forn(i, n){
+        if(vec[i].se == 2){
+            b.pb(vec[i].fi);
+        }else{
+            a.pb(vec[i].fi);
+        }
     }
-    else if(e != 0 && b > e) return e;
-    else{
-        int ans;
-        ans = min(minimum(i+1, a, b), minimum(i+1, a-A[i], b+B[i]));
-        dp[i][a] = ans;
-        return ans;
+    sort(all(a)), sort(all(b));
+    ll cur = 0;
+    ll ans = 0;
+    stack<ll> la, lb;
+    while(cur < m && sz(a) > 1 && sz(b)){
+        if(a.back() > b.back()){
+            cur += a.back();
+            la.push(a.back());
+            a.pop_back();
+            ++ans;
+            continue;
+        }
+        if(a.back() + a[sz(a) - 2]){
+            cur += a.back();
+            a.pop_back();
+            cur += a.back();
+            la.push(a.back());
+            a.pop_back();
+            ans += 2;
+            continue;
+        }
+        cur += b.back();
+        lb.push(b.back());
+        b.pop_back();
+        ans += 2;
     }
+    while(cur < m && sz(a)){
+        cur += a.back();
+        la.push(a.back());
+        a.pop_back();
+        ++ans;
+    }
+    while(cur < m && sz(b)){
+        cur += b.back();
+        lb.push(b.back());
+        b.pop_back();
+        ans += 2;
+    }
+    if(cur < m){
+        cout << -1 << el;
+        return;
+    }
+    if(cur - la >= m){
+        cur -= la;
+        --ans;
+    }
+    cout << ans << el;
 }
 
 int main(){
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL); cout.tie(NULL);
+    cout << setprecision(20)<< fixed;
     int t;
     cin >> t;
-    while(t--){
-        int ans;
-        dp = map< int, map< int, int > >();
-        cin >> n >> m;
-        for(int i = 0; i < n; ++i)cin >> A[i];
-        for(int i = 0; i < n; ++i)cin >> B[i];
-        ans = minimum(0, m, 0);
-        if(ans == INF)cout << -1 << el;
-        else cout << ans << el;
-    }
+    while(t--)sol();
 }

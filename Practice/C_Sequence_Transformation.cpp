@@ -1,53 +1,65 @@
-#include <vector>
-#include <map>
-#include <cstdlib>
-#include <fstream>
-#include <iomanip>   
-#include <iostream>  
-#include <sstream>  // istringstream buffer(myString);
-#include <stack>
-#include <algorithm>
-#include <cstring>
-#include <cassert>
-#include <math.h>
-#include <unordered_map>
+#include <bits/stdc++.h>
 
-// Useful constants 
-#define INF                         (int)1e9 
-#define EPS                         1e-9
-
+#define fi first
+#define se second
+#define forn(i,n) for(int i=0; i< (int)n; ++i)
+#define for1(i,n) for(int i=1; i<= (int)n; ++i)
+#define fore(i,l,r) for(int i=(int)l; i<= (int)r; ++i)
+#define ford(i,n) for(int i=(int)(n) - 1; i>= 0; --i)
+#define fored(i,l,r) for(int i=(int)r; i>= (int)l; --i)
+#define pb push_back
 #define el '\n'
+#define db(x) cout<< #x<< " " << x<<el
+#define ri(n) scanf("%d",&n)
+#define sz(v) int(v.size())
+#define all(v) v.begin(),v.end()
 
 using namespace std;
 
+typedef long long ll;
+typedef double ld;
+typedef pair<int,int> ii;
+typedef pair<ll,ll> pll;
+typedef tuple<int, int, int> iii;
+typedef vector<int> vi;
+typedef vector<ii> vii;
+typedef vector<ll> vll;
+typedef vector<ld> vd;
+
+
+const int inf = 1e9;
+const int nax = 1e5+200;
+const ld pi = acos(-1);
+const ld eps= 1e-9;
+
+int dr[] = {1,-1,0, 0,1,-1,-1, 1};
+int dc[] = {0, 0,1,-1,1, 1,-1,-1};
+
+void sol(){
+    int n;
+    cin >> n;
+    vi a(n);
+    forn(i, n)cin >> a[i];
+    map<int, int> ans;
+    ans[a[0]] = 0;
+    for1(i, n - 1){
+        if(a[i] == a[i - 1])continue;
+        ++ans[a[i]];
+    }
+    int fans = inf;
+    for(auto [x, cans] : ans){
+        fans = min(fans, cans + (a.back() != x));
+    }
+    cout << fans << el;
+}
+
 int main(){
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL); cout.tie(NULL);
+    cout << setprecision(20)<< fixed;
     int t;
     cin >> t;
     while(t--){
-        int n, dist, count, mCount;
-        cin >> n;
-        int a[n];
-        unordered_map<int, int> m;
-        for(int i = 0; i < n; ++i){
-            cin >> a[i];
-            m[a[i]]++;
-        }
-        unordered_map<int, int>::iterator it;
-        mCount = INF;
-        for(it = m.begin(); it != m.end(); it++){
-            dist = 0;
-            count = 0;
-            for(int i = 0; i < n; ++i){
-                if(a[i] == it->first){
-                    if(dist == 0)continue;
-                    dist = 0;
-                    count++;
-                }
-                else dist++;
-            }
-            if(dist != 0)count++;
-            mCount = min(count, mCount);
-        }
-        cout << mCount << el;
+        sol();
     }
 }

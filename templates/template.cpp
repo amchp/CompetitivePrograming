@@ -39,4 +39,9 @@ int main(){
     ios_base::sync_with_stdio(false);
     cin.tie(NULL); cout.tie(NULL);
     cout << setprecision(20)<< fixed;
+    int t = 1;
+    cin >> t;
+    while(t--){
+        sol();
+    }
 }

@@ -1,125 +1,90 @@
-#include <vector>
-#include <map>
-#include <cstdlib>
-#include <fstream>
-#include <iomanip>   
-#include <iostream>  
-#include <sstream>  // istringstream buffer(myString);
-#include <stack>
-#include <algorithm>
-#include <cstring>
-#include <cassert>
-#include <math.h>
+#include <bits/stdc++.h>
 
-// Useful constants 
-#define INF                         (int)1e9 
-#define EPS                         1e-9
-
+#define fi first
+#define se second
+#define forn(i,n) for(int i=0; i< (int)n; ++i)
+#define for1(i,n) for(int i=1; i<= (int)n; ++i)
+#define fore(i,l,r) for(int i=(int)l; i<= (int)r; ++i)
+#define ford(i,n) for(int i=(int)(n) - 1; i>= 0; --i)
+#define fored(i,l,r) for(int i=(int)r; i>= (int)l; --i)
+#define pb push_back
 #define el '\n'
+#define db(x) cout<< #x<< " " << x<<el
+#define ri(n) scanf("%d",&n)
+#define sz(v) int(v.size())
+#define all(v) v.begin(),v.end()
 
 using namespace std;
 
-vector<int> factor(int sum, vector<int> f){
-    vector<int> h;
-    for(int i = 1; i < sqrt(sum); ++i){
-        if(sum % i == 0){
-            f.push_back(i);
-            h.push_back(sum / i);
+typedef long long ll;
+typedef double ld;
+typedef pair<int,int> ii;
+typedef pair<ll,ll> pll;
+typedef tuple<int, int, int> iii;
+typedef vector<int> vi;
+typedef vector<ii> vii;
+typedef vector<ll> vll;
+typedef vector<ld> vd;
+
+
+const int inf = 1e9;
+const int nax = 1e5+200;
+const ld pi = acos(-1);
+const ld eps= 1e-9;
+
+int dr[] = {1,-1,0, 0,1,-1,-1, 1};
+int dc[] = {0, 0,1,-1,1, 1,-1,-1};
+
+int sol(){
+    int n;
+    cin >> n;
+    vi a(n);
+    int sm = 0;
+    int mx = 0;
+    forn(i, n){
+        cin >> a[i];
+        sm += a[i];
+        mx = max(mx, a[i]);
+    }
+    vi divs;
+    for(int i = 1; i*i <= sm; ++i){
+        if(sm % i == 0){
+            int j = sm / i;
+            divs.pb(i);
+            if(i != j)divs.pb(j);
         }
     }
-    for(int i = h.size() - 1; i > -1; --i)f.push_back(h[i]);
-    return f;
+    sort(all(divs));
+    reverse(all(divs));
+    auto check = [&](int div){
+        int trg = sm / div;
+        // db(trg);
+        if(trg < mx)return false;
+        int cur = 0;
+        forn(i, n){
+            cur += a[i];
+            if(cur > trg)return false;
+            if(cur == trg)cur = 0;
+        }
+        if(cur != 0)return false;
+        return true;
+    };
+    for(int& div : divs){
+        if(check(div)){
+            // db(div);
+            return n - div;
+        }
+    }
+    return n - 1;
 }
 
 int main(){
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL); cout.tie(NULL);
+    cout << setprecision(20)<< fixed;
     int t;
     cin >> t;
     while(t--){
-        int n, v, vv, sum, m, ind, mi, M, Mi, c = 0;
-        cin >> n;
-        vector<int> a, f;
-        for(int i = 0; i < n; ++i){
-            cin >> v;
-            a.push_back(v);
-        }
-        m = INF;
-        mi = 0;
-        M = 0;
-        Mi = 0;
-        sum = 0;
-        for(int i = 0; i < n; ++i){
-            sum += a[i];
-            if(m > a[i]){
-                mi = i;
-                m = a[i];
-            }
-            if(M < a[i]){
-                Mi = i;
-                M = a[i];
-            }
-        }
-        f = factor(sum, f);
-        for(int i = 0; i < f.size(); ++i){
-            if(M <= f[i]){
-                ind = i;
-                break;
-            }
-            if(i == f.size() - 2){
-                c = n - 1;
-                goto end;
-            }
-        }
-        while(m != M && a.size() > 1){
-            if(mi == 0){
-                a[1] += a[0];
-                a.erase(a.begin());
-            }else if(mi == a.size() - 1){
-                a[mi - 1] += a[mi];
-                a.erase(a.begin() + mi);
-            }else{
-                start:
-                v = f[ind] - (a[mi - 1] + a[mi]);
-                vv = f[ind] - (a[mi] + a[mi + 1]);
-                if(v < 0 && vv < 0){
-                    ind++;
-                    if(ind == f.size() - 1){
-                        c = n - 1;
-                        goto end;
-                    }
-                    goto start;
-                }else if(v < 0){
-                    a[mi + 1] += a[mi];
-                    a.erase(a.begin() + mi);
-                }else if(vv < 0){
-                    a[mi - 1] += a[mi];
-                    a.erase(a.begin() + mi);
-                }else if(v < vv){
-                    a[mi - 1] += a[mi];
-                    a.erase(a.begin() + mi);
-                }else{
-                    a[mi + 1] += a[mi];
-                    a.erase(a.begin() + mi);
-                }
-            }
-            c++;
-            m = INF;
-            mi = 0;
-            M = 0;
-            Mi = 0;
-            for(int i = 0; i < a.size(); ++i){
-                // cout << a[i] << " ";
-                if(m > a[i]){
-                    mi = i;
-                    m = a[i];
-                }
-                if(M < a[i]){
-                    Mi = i;
-                    M = a[i];
-                }
-            }
-            // cout << el;
-        }
-        end:
-        std::cout << c << el;
-    } 
+        cout << sol() << el;
+    }
 }

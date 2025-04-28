@@ -1,40 +1,74 @@
-#include <vector>
-#include <map>
-#include <cstdlib>
-#include <fstream>
-#include <iomanip>   
-#include <iostream>  
-#include <sstream>  // istringstream buffer(myString);
-#include <stack>
-#include <algorithm>
-#include <cstring>
-#include <cassert>
-#include <math.h>
-#include <unordered_map>
+#include <bits/stdc++.h>
 
-// Useful constants 
-#define INF                         (int)1e9 
-#define EPS                         1e-9
-
+#define fi first
+#define se second
+#define forn(i,n) for(int i=0; i< (int)n; ++i)
+#define for1(i,n) for(int i=1; i<= (int)n; ++i)
+#define fore(i,l,r) for(int i=(int)l; i<= (int)r; ++i)
+#define ford(i,n) for(int i=(int)(n) - 1; i>= 0; --i)
+#define fored(i,l,r) for(int i=(int)r; i>= (int)l; --i)
+#define pb push_back
 #define el '\n'
+#define db(x) cout<< #x<< " " << x<<el
+#define ri(n) scanf("%d",&n)
+#define sz(v) int(v.size())
+#define all(v) v.begin(),v.end()
 
 using namespace std;
 
+typedef long long ll;
+typedef double ld;
+typedef pair<int,int> ii;
+typedef pair<ll,ll> pll;
+typedef tuple<int, int, int> iii;
+typedef vector<int> vi;
+typedef vector<ii> vii;
+typedef vector<ll> vll;
+typedef vector<ld> vd;
+
+
+const int inf = 1e9;
+const int nax = 1e5+200;
+const ld pi = acos(-1);
+const ld eps= 1e-9;
+
+int dr[] = {1,-1,0, 0,1,-1,-1, 1};
+int dc[] = {0, 0,1,-1,1, 1,-1,-1};
+
+void sol(){
+    int a, b, n;
+    cin >> a >> b >> n;
+    vi wa(a), wb(b);
+    vector<ii> edgs(n);
+    forn(i, n){
+        int u;
+        cin >> u;
+        --u;
+        edgs[i].fi = u;
+        ++wa[u];
+    }
+    forn(i, n){
+        int v;
+        cin >> v;
+        --v;
+        edgs[i].se = v;
+        ++wb[v];
+    }
+    ll ans = 0;
+    for(auto& [u, v] : edgs){
+        ans += n - wa[u] - wb[v] + 1;
+    }
+    ans /= 2;
+    cout << ans << el;
+}
+
 int main(){
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL); cout.tie(NULL);
+    cout << setprecision(20)<< fixed;
     int t;
     cin >> t;
     while(t--){
-        int a, b, k;
-        cin >> a >> b >> k;
-        int ai[k], bi[k];
-        int sum = 0; 
-        for(int i = 0; i < k; ++i)cin >> ai[i];
-        for(int i = 0; i < k; ++i)cin >> bi[i];
-        for(int i = 0; i < k; ++i){
-            for(int j = i+1; j < k; ++j){
-                if(ai[i] != ai[j] && bi[i] != bi[j]) sum++;
-            }
-        }
-        cout << sum << el;
+        sol();
     }
 }
